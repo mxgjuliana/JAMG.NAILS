@@ -91,36 +91,11 @@ const ServiceListModal: FC<ServiceListProps> = ({ servicesSelected, setServicesS
                     <View style={styles.overlay}>
                         <View style={styles.modalContent}>
                             <View style={styles.modalHeader}>
-                                <Text style={styles.modalTitle}>Selecciona Servicios</Text>
+                                <Text style={styles.modalTitle}>{}</Text>
                                 <TouchableOpacity onPress={() => setIsExpanded(false)} style={styles.closeButton}>
-                                    <MaterialIcons name="close" size={24} color="#666" />
+                                    <MaterialIcons name="date-range" size={24} color="#666" />
                                 </TouchableOpacity>
                             </View>
-
-                            <View style={styles.searchContainer}>
-                                <MaterialIcons name="search" size={24} color="#666" style={styles.searchIcon} />
-                                <TextInput
-                                    style={styles.searchInput}
-                                    placeholder="Buscar servicio..."
-                                    value={serviceInput}
-                                    onChangeText={setServiceInput}
-                                    autoFocus
-                                />
-                            </View>
-
-                            {filteredServices.length > 0 ? (
-                                <ScrollView>
-                                    {filteredServices.map((service) => (
-                                        <ServiceItem
-                                            key={service.IdServicio}
-                                            isSelected={servicesSelected.some(x => x.IdServicio === service.IdServicio)}
-                                            onSelect={onSelect}
-                                            servicio={service} />
-                                    ))}
-                                </ScrollView>
-                            ) : (
-                                <Text style={{ textAlign: 'center', marginTop: 10 }}>No hay resultados</Text>
-                            )}
 
                             {servicesSelected.length > 0 && (
                                 <View style={styles.summary}>
