@@ -4,6 +4,8 @@ import { IService } from '../services/IService';
 import CalendarDays from '../components/calendar/calendarDays';
 import ServiceListModal from '../components/services/serviceListModal';
 import HourTag from '../components/hours/tagHour';
+import ModalConfirmacion from '../components/modalConfirmation/modalConfirmation';
+import { useAppContext } from '../context/AppContext';
 
 const servicesList: IService[] = [
   {
@@ -53,13 +55,25 @@ const hoursDisponibles: string[] = [
   '18:30',
 ]
 
-
 const AgendamientoCalendario = () => {
   const [mesSeleccionado, setMesSeleccionado] = useState(new Date());
-  const [fechaSeleccionada, setFechaSeleccionada] = useState<Date | null>(null);
-  const [selectedServices, setSelectedServices] = useState<IService[]>([]);
-  const [selectedTime, setSelectedTime] = useState<string | null>(null);
-  const [isExpanded, setIsExpanded] = useState<boolean>(false);
+  const [showConfirmation, setShowConfirmation] = useState(false);
+  const { 
+    selectedServices, 
+    setSelectedServices,
+    selectedTime,
+    setSelectedTime,
+    fechaSeleccionada,
+    setFechaSeleccionada,
+    isExpanded,
+    setIsExpanded
+  } = useAppContext();
+
+  // Simula un usuario logueado (reemplazar con tu lógica real de autenticación)
+  const userLoggedIn = {
+    nombre: "Juan Pérez",
+    celular: "3001234567"
+  };
 
   useEffect(() => {
     if (selectedServices.length === 0) {
@@ -78,6 +92,17 @@ const AgendamientoCalendario = () => {
   const onSelectHour = (hour: string) => {
     setSelectedTime(hour);
   }
+
+  const handleConfirmCita = (userData: { nombre: string; celular: string }) => {
+    // Aquí irá la lógica para guardar la cita
+    console.log('Cita confirmada:', {
+      servicios: selectedServices,
+      fecha: fechaSeleccionada,
+      hora: selectedTime,
+      usuario: userData
+    });
+    setShowConfirmation(false);
+  };
 
   return (
     <>
@@ -114,11 +139,17 @@ const AgendamientoCalendario = () => {
 
       </ScrollView>
       {fechaSeleccionada !== null && selectedTime !== null && selectedTime !== '' && selectedServices.length > 0 && (
-        <TouchableOpacity style={styles.botonConfirmar}>
-          <Text style={styles.textoBoton}>Confirmar</Text>
+        <TouchableOpacity onPress={() => setShowConfirmation(true)} style={styles.botonConfirmar}>
+          <Text style={styles.textoBoton}>Continuar</Text>
         </TouchableOpacity>
       )}
 
+      <ModalConfirmacion
+        isVisible={showConfirmation}
+        onClose={() => setShowConfirmation(false)}
+        onConfirm={handleConfirmCita}
+        userLoggedIn={userLoggedIn} // Pasar null si el usuario no está logueado
+      />
     </>
   );
 };
@@ -134,7 +165,7 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    padding: 16, marginTop: 40,
+    padding: 16, 
     backgroundColor: '#fff'
   },
   button: { backgroundColor: '#007AFF', padding: 12, borderRadius: 8, alignItems: 'center', marginTop: 20 },

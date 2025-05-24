@@ -38,10 +38,78 @@
 //   );
 // }
 
-import { Stack } from "expo-router"
+import { Drawer } from 'expo-router/drawer';
+import { AppProvider } from './context/AppContext';
+import CustomDrawer from './components/drawer/CustomDrawer';
+import { usePathname } from 'expo-router';
 
 export default function RootLayout() {
+  const pathname = usePathname();
+  const hideDrawer = pathname === '/(screens)/inicio' || pathname === '/(screens)/login';
+
   return (
-    <Stack screenOptions={{ headerShown: false }} />
+    <AppProvider>
+      <Drawer
+        screenOptions={{
+          headerShown: !hideDrawer,
+          headerStyle: {
+            backgroundColor: '#94c87d', // Color verde del proyecto
+          },
+          headerTintColor: '#fff', // Color del texto del header
+          drawerStyle: {
+            width: '80%',
+          },
+          swipeEnabled: !hideDrawer,
+          swipeEdgeWidth: 50,
+        }}
+        drawerContent={hideDrawer ? () => null : () => (
+          <CustomDrawer
+            isLoggedIn={true} // Reemplazar con tu lógica de autenticación
+            userName="Juan Pérez" // Reemplazar con el nombre del usuario logueado
+            onLogout={() => {
+              // Implementar lógica de cierre de sesión
+              console.log('Cerrar sesión');
+            }}
+          />
+        )}
+      >
+        <Drawer.Screen
+          name="(screens)/inicio"
+          options={{
+            headerShown: false,
+            swipeEnabled: false,
+            drawerLabel: () => null,
+            drawerIcon: () => null,
+          }}
+        />
+        <Drawer.Screen
+          name="(screens)/login"
+          options={{
+            headerShown: false,
+            swipeEnabled: false,
+            drawerLabel: () => null,
+            drawerIcon: () => null,
+          }}
+        />
+        <Drawer.Screen
+          name="(screens)/agendamiento"
+          options={{
+            title: 'Agendar Cita',
+          }}
+        />
+        <Drawer.Screen
+          name="(screens)/misCitas"
+          options={{
+            title: 'Mis Citas',
+          }}
+        />
+        <Drawer.Screen
+          name="(screens)/cupones"
+          options={{
+            title: 'Cupones',
+          }}
+        />
+      </Drawer>
+    </AppProvider>
   );
 }
